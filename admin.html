@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel administratora</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <h1>Panel administratora</h1>
+
+  <form id="activity-form">
+    <input type="text" name="name" placeholder="Nazwa" required />
+    <input type="number" name="price" placeholder="Cena (zł)" required />
+    <input type="number" name="cycle" placeholder="Czas trwania (min)" required />
+    <button type="submit">Zapisz</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Nazwa</th><th>Cena (zł)</th><th>Czas (min)</th><th>Pozostało</th><th>Akcje</th></tr>
+    </thead>
+    <tbody id="activity-list"></tbody>
+  </table>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/admin.js"></script>
+</body>
+</html>

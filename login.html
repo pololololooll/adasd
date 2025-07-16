@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Logowanie</title>
+    <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+  <form class="login-form" method="POST" action="/login">
+    <h2>Zaloguj się</h2>
+    
+    <label for="nick">Nick:</label>
+    <input type="text" id="nick" name="nick" required>
+
+    <label for="password">Hasło:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Zaloguj</button>
+  </form>
+
+</body>
+</html>

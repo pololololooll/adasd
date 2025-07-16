@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Czasomierz usług</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Czasomierz usług</h1>
+
+  <h2>Aktywne czynności</h2>
+  <div class="grid">
+    <div class="card">
+      <h2>Cennik</h2>
+      <table id="cennik">
+        <thead>
+          <tr>
+            <th>Tortury</th>
+            <th>Cena</th>
+            <th>Czas trwania</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
