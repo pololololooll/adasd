@@ -1,95 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
+  font-family: 'Inter', sans-serif;
+  background: #0b0b0d;
   margin: 0;
   padding: 2rem;
-  color: #111;
+  color: #ffffff;
 }
 
 h1 {
   display: flex;
   align-items: center;
-  font-size: 24px;
+  font-size: 28px;
+  color: white;
+  margin-bottom: 0.5rem;
 }
 
 h1::before {
   content: "⏱️";
   margin-right: 10px;
+  font-size: 28px;
 }
 
-.button_end {
-  background: #007bff;
+h2 {
+  font-size: 20px;
   color: white;
-  border: none;
-  padding: 10px 16px;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  float: right;
-}
-.button_start{
-   background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  float: left; 
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .grid {
   display: flex;
-  margin-top: 2rem;
-  gap: 2rem;
   flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
 }
 
 .card {
-  background: white;
-  padding: 1.2rem;
-  border-radius: 10px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
   width: 240px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card h2 {
   font-size: 18px;
-  margin: 0 0 10px 0;
+  margin-bottom: 10px;
+  color: white;
 }
 
 .timer {
-  font-size: 32px;
+  font-size: 46px;
   font-weight: bold;
+  color: #ff2e2e;
   margin-bottom: 10px;
 }
 
 .info {
   font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.small-btn {
-  padding: 6px 12px;
-  font-size: 13px;
+  color: #ccc;
 }
 
 table {
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
+  color: white;
 }
 
 th, td {
+  padding: 8px 10px;
   text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
+}
+
+thead {
+  background-color: rgba(255,255,255,0.1);
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255,255,255,0.05);
+}
+
+.button_start, .button_end {
+  padding: 10px 16px;
   font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
 }
-
-th {
-  background-color: #f1f1f1;
-}
-
 
 .login-form {
   background: white;
