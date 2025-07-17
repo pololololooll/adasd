@@ -19,6 +19,7 @@ util.fileEndpointGet(app, "/", "views/index.html");
 util.fileEndpointGet(app, "/style.css", "views/style.css");
 util.fileEndpointGet(app, "/script.js", "views/script.js");
 util.fileEndpointGet(app, "/login", "views/login.html");
+util.fileEndpointGet(app, "/client_utils.js", "views/client_utils.js");
 
 // Admin resources 
 util.fileEndpointGet(app, "/admin", "views/admin.html", true, "/login");
@@ -41,19 +42,20 @@ app.post("/login", (req, res) => {
   res.redirect("/admin");
 });
 
-const activities = util.readActivities();
+const storage = util.readStorage();
+
 app.post("/api/activity", (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   if (!req.body || !req.body.name || !req.body.price || !req.body.cycle)
     return res.send({ msg: "Niepoprawne zapytanie (Czy wszystkie pola są uzupełnione?)" });
 
-  if (activities.map(a => a.name).includes(req.body.name)) {
-    const idx = activities.findIndex(a => a.name == req.body.name);
-    activities[idx].price = req.body.price;
-    activities[idx].cycle = req.body.cycle;
+  if (storage.activities.map(a => a.name).includes(req.body.name)) {
+    const idx = storage.activities.findIndex(a => a.name == req.body.name);
+    storage.activities[idx].price = req.body.price;
+    storage.activities[idx].cycle = req.body.cycle;
     res.send({ msg: "Pomyślnie zmieniono aktywność" });
   } else {
-    activities.push({
+    storage.activities.push({
       name: req.body.name,
       price: req.body.price,
       cycle: req.body.cycle,
@@ -62,58 +64,80 @@ app.post("/api/activity", (req, res) => {
     });
     res.send({ msg: "Pomyślnie dodano aktywność" });
   }
-  io.sockets.emit("timerUpdate", activities);
-  util.saveActivities();
+  io.sockets.emit("update", storage);
+  util.saveStorage(storage);
+});
+
+app.post("/api/offers", (req, res) => {
+  if (!util.isAdmin(req)) return res.sendStatus(403);
+  if (!req.body || !req.body.action || !req.body.name || !req.body.price)
+    return res.send({ msg: "Niepoprawne zapytanie (Czy wszystkie pola są uzupełnione?)" });
+
+  if (storage.offers.map(o => o.name).includes(req.body.name)) {
+    const idx = storage.offers.indexOf(o => o.name == req.body.name);
+    if (idx === undefined) return;
+    if (req.body.action === "delete") {
+      storage.offers.splice(idx, 1);
+    } else {
+      storage.offers[idx].price = req.body.price;
+    }
+    res.send({ msg: "Pomyślnie zmieniono ofertę" });
+  } else {
+    storage.offers.push({ name: req.body.name, price: req.body.price });
+    res.send({ msg: "Pomyślnie dodano ofertę" });
+  }
+  io.sockets.emit("update", storage);
+  util.saveStorage(storage);
 });
 
 app.post("/api/timer", (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
-  const idx = activities.findIndex(a => a.name == req?.body?.name);
+  const idx = storage.activities.findIndex(a => a.name == req?.body?.name);
   if (!req.body || !req.body.action || !req.body.name || idx === undefined)
     return res.send({ msg: "Nieprawidłowe zapytanie" });
 
-  const activ = activities[idx];
+  const activ = storage.activities[idx];
   switch (req.body.action) {
     case "extend":
-      activities[idx].time_left += activ.cycle;
+      storage.activities[idx].time_left += activ.cycle;
       break;
     case "pause":
-      activities[idx].stopped = !activ.stopped;
+      storage.activities[idx].stopped = !activ.stopped;
       break;
     case "shorten":
-      activities[idx].time_left = Math.max(activ.time_left - activ.cycle, 0);
+      storage.activities[idx].time_left = Math.max(activ.time_left - activ.cycle, 0);
       break;
     case "zero":
-      activities[idx].time_left = 0;
+      storage.activities[idx].time_left = 0;
       break;
     case "delete":
-      activities.splice(idx, 1);
+      storage.activities.splice(idx, 1);
       break;
     default:
       res.send({ msg: "Nieprawidłowe zapytanie" });
       return;
   }
   res.send({ msg: "Pomyślnie zmieniono "});
-  io.sockets.emit("timerUpdate", activities);
-  util.saveActivities();
+  io.sockets.emit("update", storage);
+  util.saveStorage(storage);
 });
 
 io.on("connection", (sock) => {
-  sock.emit("init", activities);
+  sock.emit("init", storage);
 });
 
 // Decrement every activity's timer each second
 setInterval(() => {
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].time_left == 0 || activities[i].stopped) continue;
-    activities[i].time_left -= 1;
+  for (let i = 0; i < storage.activities.length; i++) {
+    if (storage.activities[i].time_left == 0 || storage.activities[i].stopped) continue;
+    storage.activities[i].time_left -= 1;
   }
 }, 1000);
 
 // Sync all clients every minute and backup activities
 setInterval(() => {
-  io.sockets.emit("timerUpdate", activities);
-  util.saveActivities();
+  io.sockets.emit("update", storage);
+  util.saveStorage(storage);
 }, 60_000);
 
 server.listen(PORT, () => {

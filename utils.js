@@ -9,6 +9,11 @@ import { timingSafeEqual } from "crypto";
  * @const
  */
 export const FS_ROOT = dirname(fileURLToPath(import.meta.url));
+/**
+ * @description file name of the storage json file
+ * @const
+ */
+export const STORAGE_FILE = "storage.json";
 
 /**
  * @param {Express.Request} req
@@ -18,11 +23,8 @@ export function isAdmin(req) {
   if (
     sID != null &&
     bcrypt.compareSync(`${process.env.GLOBAL_LOGIN}-|-${process.env.GLOBAL_PASS}`, sID)
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  ) return true;
+  return false;
 }
 
 /**
@@ -62,7 +64,7 @@ export function safeCompare(a, b) {
  */
 export function log(type, message) {
   const d = new Date()
-  console.log(`[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}] [${type}] ${message}`);
+  console.log(`[${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}] [${type}] ${message}`);
 }
 
 /**
@@ -76,29 +78,44 @@ export function log(type, message) {
  */
 
 /**
- * @param {Activity[]} activities
+ * @typedef Offer
+ * @type {object}
+ * @property {string} name 
+ * @property {number} price - w plnach
  */
-export function saveActivities(activities) {
+
+/**
+ * @typedef Storage
+ * @type {object}
+ * @property {Activity[]} activities
+ * @property {Offer[]} offers
+ */
+
+/**
+ * @param {Storage} storage
+ */
+export function saveStorage(storage) {
   try {
     writeFileSync(
-      join(root, "czynnosci.json"),
-      JSON.stringify(activities), 
+      join(FS_ROOT, STORAGE_FILE),
+      JSON.stringify(storage), 
     );
-    log("INFO", "Saving activities to czynnosci.json.");
+    log("INFO", `Saving storage to ${STORAGE_FILE}`);
   } catch (err) {
+    log("ERROR", "Error while trying to save storage");
     log("ERROR", err);
   }
 }
 
 /**
- * @returns {Activity[]|null}
+ * @returns {Storage|null}
  */
-export function readActivities() {
+export function readStorage() {
   try {
-    const data = readFileSync(join(FS_ROOT, "czynnosci.json"), { encoding: "utf-8" });
+    const data = readFileSync(join(FS_ROOT, STORAGE_FILE), { encoding: "utf-8" });
     return JSON.parse(data);
   } catch (err) {
-    log("ERROR", "Error while reading czynnosci.json");
+    log("ERROR", `Error while reading ${STORAGE_FILE}`);
     log("ERROR", err);
     return null;
   }
