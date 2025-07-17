@@ -161,3 +161,8 @@ tr:nth-child(even) {
 .login-form button:hover {
   background-color: #ff2e2e;
 }
+
+.action {
+  background-color: #000;
+}
+
