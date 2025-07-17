@@ -9,7 +9,7 @@ import { Server } from "socket.io";
 import { join, dirname } from 'path';
 import { fileURLToPath } from "url";
 
-const root = dirname(fileURLToPath(import.meta.url))
+const root = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -19,19 +19,19 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.get("/", (_, res) => {
-  res.sendFile("index.html", { root: root });
+  res.sendFile("views/index.html", { root: root });
 });
 
 app.get("/style.css", (_, res) => {
-  res.sendFile("style.css", { root: root });
+  res.sendFile("views/style.css", { root: root });
 });
 
 app.get("/script.js", (_, res) => {
-  res.sendFile("script.js", { root: root });
+  res.sendFile("views/script.js", { root: root });
 });
 
 app.get("/login", (_, res) => {
-  res.sendFile("login.html", { root: root });
+  res.sendFile("views/login.html", { root: root });
 });
 
 function safeCompare(a, b) {
@@ -75,7 +75,7 @@ function isAdmin(req) {
 
 app.get("/admin", (req, res) => {
   if (isAdmin(req)) {
-    res.sendFile("admin.html", { root: root });
+    res.sendFile("views/admin.html", { root: root });
   } else {
     res.redirect("/login");
   }
@@ -83,7 +83,7 @@ app.get("/admin", (req, res) => {
 
 app.get("/admin.js", (req, res) => {
   if (isAdmin(req)) {
-    res.sendFile("admin.js", { root: root });
+    res.sendFile("views/admin.js", { root: root });
   } else {
     res.redirect("/login");
   }
