@@ -2,7 +2,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #0b0b0d;
+  background: #000;
   margin: 0;
   padding: 2rem;
   color: #ffffff;
@@ -52,14 +52,14 @@ h2 {
 }
 
 .timer {
-  font-size: 46px;
+  font-size: 50px;
   font-weight: bold;
-  color: #ff2e2e;
+  color: #f70418;
   margin-bottom: 10px;
 }
 
 .info {
-  font-size: 14px;
+  font-size: 18px;
   color: #ccc;
 }
 
