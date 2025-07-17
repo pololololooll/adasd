@@ -78,7 +78,7 @@ function renderActivities(activities) {
         <button class="action" title="Przedłuż" data-action="extend">➕</button>
         <button class="action" title="Zastopuj" data-action="pause">⏸️</button>
         <button class="action" title="Skróć" data-action="shorten">➖</button>
-        <button class="action" title="Zeruj" data-action="zero">↻</button>
+        <button class="action" title="Zeruj" data-action="zero">🔄</button>
         <button class="action" title="Usuń" data-action="delete">🗑️</button>
       </td>
     `;

@@ -43,6 +43,9 @@ app.post("/login", (req, res) => {
 });
 
 const storage = util.readStorage();
+const COOLDOWN_DURATION = 3000;
+/** @type {Object.<string, boolean>} */
+const cooldowns = Object.fromEntries(Object.keys(storage.activities).map(k => [k, false]));
 
 app.post("/api/activity", (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
@@ -62,6 +65,7 @@ app.post("/api/activity", (req, res) => {
       time_left: 0,
       stopped: false
     });
+    cooldowns[req.body.name] = false;
     res.send({ msg: "Pomyślnie dodano aktywność" });
   }
   io.sockets.emit("update", storage);
@@ -90,6 +94,8 @@ app.post("/api/offers", (req, res) => {
   util.saveStorage(storage);
 });
 
+
+
 app.post("/api/timer", (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   const idx = storage.activities.findIndex(a => a.name == req?.body?.name);
@@ -97,6 +103,7 @@ app.post("/api/timer", (req, res) => {
     return res.send({ msg: "Nieprawidłowe zapytanie" });
 
   const activ = storage.activities[idx];
+  if (cooldowns[req.body.name]) return res.send({ msg: "Akcja jest na cooldownie" });
   switch (req.body.action) {
     case "extend":
       storage.activities[idx].time_left += activ.cycle;
@@ -117,6 +124,8 @@ app.post("/api/timer", (req, res) => {
       res.send({ msg: "Nieprawidłowe zapytanie" });
       return;
   }
+  cooldowns[req.body.name] = true;
+  setTimeout(() => cooldowns[req.body.name] = false, COOLDOWN_DURATION);
   res.send({ msg: "Pomyślnie zmieniono "});
   io.sockets.emit("update", storage);
   util.saveStorage(storage);
