@@ -130,7 +130,7 @@ tr:nth-child(even) {
 }
 
 .login-form input:focus {
-  border-color: #8b5cf6;
+  border-color: #ff2e2e;
   background-color: rgba(255, 255, 255, 0.15);
   outline: none;
 }
@@ -138,7 +138,7 @@ tr:nth-child(even) {
 .login-form button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #8b5cf6;
+  background-color: #ff2e2e;
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -149,5 +149,5 @@ tr:nth-child(even) {
 }
 
 .login-form button:hover {
-  background-color: #7c3aed;
+  background-color: #ff2e2e;
 }
