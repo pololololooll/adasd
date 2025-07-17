@@ -1,0 +1,104 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 2rem;
+  color: #111;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+
+h1::before {
+  content: "⏱️";
+  margin-right: 10px;
+}
+
+.grid {
+  display: flex;
+  margin-top: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+  width: 240px;
+}
+
+.card h2 {
+  font-size: 18px;
+  margin: 0 0 10px 0;
+}
+
+.timer {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.info {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.small-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+th {
+  background-color: #f1f1f1;
+}
+
+
+.login-form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.login-form h2 {
+  margin-bottom: 15px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-form button {
+  padding: 10px 15px;
+  background-color: #2b7cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #1a5edb;
+}

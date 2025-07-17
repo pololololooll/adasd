@@ -12,7 +12,7 @@
     <input type="text" name="name" placeholder="Nazwa" required />
     <input type="number" name="price" placeholder="Cena (zł)" required />
     <input type="number" name="cycle" placeholder="Czas trwania (min)" required />
-    <button type="submit">Zapisz</button>
+    <button type="submit">Zapisz</button> <= odpowiada za tabelke z dietami itp
   </form>
 
   <table>
@@ -20,6 +20,21 @@
       <tr><th>Nazwa</th><th>Cena (zł)</th><th>Czas (min)</th><th>Pozostało</th><th>Akcje</th></tr>
     </thead>
     <tbody id="activity-list"></tbody>
+  </table>
+  <br>
+<form id="offers-form">
+    <input type="text" name="name" placeholder="Nazwa" required />
+    <input type="text" name="price" placeholder="Cena (zł)" required>
+    <button type="submit">Zapisz</button> Odpowiada za Tabele z Cennikiem dla cweli
+</form>
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa</th>
+        <th>Cena (zł)</th>
+      </tr>
+    </thead>
+    <tbody id="offers-list"></tbody>
   </table>
 
   <script src="/socket.io/socket.io.js"></script>
