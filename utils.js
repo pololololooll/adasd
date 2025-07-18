@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import bcrypt from "bcrypt";
 import { fileURLToPath } from "url";
 import { writeFileSync, readFileSync } from "fs";
@@ -65,6 +66,21 @@ export function safeCompare(a, b) {
 export function log(type, message) {
   const d = new Date()
   console.log(`[${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}] [${type}] ${message}`);
+}
+
+/**
+ * @param {string} message
+ */
+export async function webhookLog(message) {
+  await fetch(process.env.WEBHOOK_URL, {
+    "method": "POST",
+    "headers": { "Content-Type": "application/json" },
+    "body": JSON.stringify({
+      content: message,
+      embeds: null,
+      attachments: []
+    })
+  });
 }
 
 /**
