@@ -149,6 +149,11 @@ setInterval(() => {
   util.saveStorage(storage);
 }, 60_000);
 
+// Log storage.json to a discord webhook every 10min
+setInterval(async () => {
+  await util.webhookLog(`Storage.json:\n\`\`\`json\n${JSON.stringify(storage, null, 2)}\n\`\`\``);
+}, 600_000);
+
 server.listen(PORT, () => {
   util.log("INFO", `Listening on ::${PORT}`);
 });
