@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<style>
+  body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #000;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+}
+
+.avatar {
+  width: 90px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 5px 0;
+}
+
+.code {
+  font-size: 14px;
+  color: #bbb;
+  margin-bottom: 20px;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.socials img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s;
+}
+
+.socials img:hover {
+  transform: scale(1.1);
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1c1c1c;
+  padding: 14px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.link-btn:hover {
+  background-color: #333;
+}
+
+.link-btn img {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 13px;
+  color: #777;
+}
+
+.footer-links a {
+  color: #777;
+  text-decoration: none;
+}
+</style>
+<body>
+  <div class="container">
+    <img src="icons/avatar.webp" alt="avatar" class="avatar" />
+    <h1>Takuu</h1>
+    <p class="code">KOD: TAKU </p>
+
+    <div class="socials">
+      <a href="https://www.instagram.com/takupl/" target="_blank"><img src="icons/icons8-instagram-50.png" alt="Instagram"></a>
+      <a href="https://www.twitch.tv/takuu_" target="_blank"><img src="icons/icons8-twitch-50.png" alt="Twitch"></a>
+      <a href="https://www.youtube.com/@TakuPL" target="_blank"><img src="icons/icons8-youtube-50.png" alt="YouTube"></a>
+      <a href="https://kick.com/takuu" target="_blank"><img src="icons/k-w.png" alt="Kick"></a>
+      <a href="https://x.com/taku_pl" target="_blank"><img src="icons/icons8-x-50.png" alt="X"></a>
+      <a href="https://discord.gg/6JV7jxxxhp" target="_blank"><img src="icons/icons8-discord-50.png" alt="Discord"></a>
+    </div>
+
+    <div class="link-list">
+      <a href="https://www.youtube.com/@TakuPlay" class="link-btn" target="_blank">
+       Nowy Kanał - Daj Subika
+      </a>
+      <a href="https://csgo-skins.com/?ref=taku" target="_blank" class="link-btn">
+     [+18]CSGO-SKINS - Skrzynki Ze skinami CS2
+      </a>
+      <a href="https://pirateswap.com/?ref=taku" class="link-btn" target="_blank">
+        PIRATE SWAP - Wymiana & Sprzedaż skinów CS2
+   </a>
+    </div>
+  </div>
+</body>
+</html>
