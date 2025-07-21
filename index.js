@@ -14,10 +14,14 @@ app.use(cookieParser());
 const server = http.createServer(app);
 const io = new Server(server);
 
+
+app.use("/icons", express.static("icons"));
+
 // Normal user resources
 util.fileEndpointGet(app, "/", "views/index.html");
 util.fileEndpointGet(app, "/style.css", "views/style.css");
 util.fileEndpointGet(app, "/script.js", "views/script.js");
+util.fileEndpointGet(app, "/sociale", "views/sociale.html");
 util.fileEndpointGet(app, "/login", "views/login.html");
 util.fileEndpointGet(app, "/client_utils.js", "views/client_utils.js");
 
