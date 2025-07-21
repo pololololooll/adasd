@@ -17,7 +17,6 @@ h1 {
 }
 
 h1::before {
-  content: "⏱️";
   margin-right: 10px;
   font-size: 28px;
 }
