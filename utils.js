@@ -1,20 +1,15 @@
 import 'dotenv/config';
 import bcrypt from "bcrypt";
-import { fileURLToPath } from "url";
-import { writeFileSync, readFileSync } from "fs";
-import { join, dirname } from "path";
 import { timingSafeEqual } from "crypto";
+import { Client } from "pg";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 /**
  * @description root folder of project
  * @const
  */
 export const FS_ROOT = dirname(fileURLToPath(import.meta.url));
-/**
- * @description file name of the storage json file
- * @const
- */
-export const STORAGE_FILE = "storage.json";
 
 /**
  * @param {Express.Request} req
@@ -108,15 +103,37 @@ export async function webhookLog(message) {
  */
 
 /**
+ * @returns {Promise<Client>}
+ */
+export async function initDB() {
+  const client = new Client({
+    connectionString: process.env.DB_URL
+  });
+  await client.connect();
+  log("INFO", "Connected to db");
+  
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS Storage (
+      id SERIAL PRIMARY KEY,
+      data JSONB
+    )
+  `);
+  
+  // Db is only so the JSON doesnt get reset by current hosting
+  const res = await client.query("SELECT COUNT(*) FROM Storage");
+  if (parseInt(res.rows[0].count) === 0)
+    await client.query("INSERT INTO Storage (data) VALUES ({})");
+  return client;
+}
+
+/**
+ * @param {Client} client
  * @param {Storage} storage
  */
-export function saveStorage(storage) {
+export async function saveStorage(client, storage) {
   try {
-    writeFileSync(
-      join(FS_ROOT, STORAGE_FILE),
-      JSON.stringify(storage), 
-    );
-    log("INFO", `Saving storage to ${STORAGE_FILE}`);
+    await client.query("UPDATE Storage SET data=$1 WHERE id=1", [storage]);
+    log("INFO", `Saving storage to DB`);
   } catch (err) {
     log("ERROR", "Error while trying to save storage");
     log("ERROR", err);
@@ -124,14 +141,15 @@ export function saveStorage(storage) {
 }
 
 /**
- * @returns {Storage|null}
+ * @param {Client} client
+ * @returns {Promise<Storage|null>}
  */
-export function readStorage() {
+export async function readStorage(client) {
   try {
-    const data = readFileSync(join(FS_ROOT, STORAGE_FILE), { encoding: "utf-8" });
-    return JSON.parse(data);
+    const res = await client.query("SELECT data FROM Storage where id=1");
+    return res.rows[0].data;
   } catch (err) {
-    log("ERROR", `Error while reading ${STORAGE_FILE}`);
+    log("ERROR", `Error while reading from DB`);
     log("ERROR", err);
     return null;
   }

@@ -8,13 +8,13 @@ import { Server } from "socket.io";
 
 const PORT = 3001;
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+const db = await util.initDB();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-const server = http.createServer(app);
-const io = new Server(server);
-
-
 app.use("/icons", express.static("icons"));
 
 // Normal user resources
@@ -46,12 +46,12 @@ app.post("/login", (req, res) => {
   res.redirect("/admin");
 });
 
-const storage = util.readStorage();
+const storage = await util.readStorage(db);
 const COOLDOWN_DURATION = 3000;
 /** @type {Object.<string, boolean>} */
 const cooldowns = Object.fromEntries(Object.keys(storage.activities).map(k => [k, false]));
 
-app.post("/api/activity", (req, res) => {
+app.post("/api/activity", async (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   if (!req.body || !req.body.name || !req.body.price || !req.body.cycle)
     return res.send({ msg: "Niepoprawne zapytanie (Czy wszystkie pola są uzupełnione?)" });
@@ -73,10 +73,10 @@ app.post("/api/activity", (req, res) => {
     res.send({ msg: "Pomyślnie dodano aktywność" });
   }
   io.sockets.emit("update", storage);
-  util.saveStorage(storage);
+  await util.saveStorage(db, storage);
 });
 
-app.post("/api/offers", (req, res) => {
+app.post("/api/offers", async (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   if (!req.body || !req.body.action || !req.body.name || !req.body.price)
     return res.send({ msg: "Niepoprawne zapytanie (Czy wszystkie pola są uzupełnione?)" });
@@ -95,12 +95,12 @@ app.post("/api/offers", (req, res) => {
     res.send({ msg: "Pomyślnie dodano ofertę" });
   }
   io.sockets.emit("update", storage);
-  util.saveStorage(storage);
+  await util.saveStorage(db, storage);
 });
 
 
 
-app.post("/api/timer", (req, res) => {
+app.post("/api/timer", async (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   const idx = storage.activities.findIndex(a => a.name == req?.body?.name);
   if (!req.body || !req.body.action || !req.body.name || idx === undefined)
@@ -132,7 +132,7 @@ app.post("/api/timer", (req, res) => {
   setTimeout(() => cooldowns[req.body.name] = false, COOLDOWN_DURATION);
   res.send({ msg: "Pomyślnie zmieniono "});
   io.sockets.emit("update", storage);
-  util.saveStorage(storage);
+  await util.saveStorage(db, storage);
 });
 
 io.on("connection", (sock) => {
@@ -148,15 +148,10 @@ setInterval(() => {
 }, 1000);
 
 // Sync all clients every minute and backup activities
-setInterval(() => {
-  io.sockets.emit("update", storage);
-  util.saveStorage(storage);
-}, 60_000);
-
-// Log storage.json to a discord webhook every 10min
 setInterval(async () => {
-  await util.webhookLog(`Storage.json:\n\`\`\`json\n${JSON.stringify(storage, null, 2)}\n\`\`\``);
-}, 600_000);
+  io.sockets.emit("update", storage);
+  await util.saveStorage(db, storage);
+}, 60_000);
 
 server.listen(PORT, () => {
   util.log("INFO", `Listening on ::${PORT}`);

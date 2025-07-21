@@ -145,7 +145,7 @@ tr:nth-child(even) {
   outline: none;
 }
 
-.login-form button, button.sociale {
+.login-form button {
   width: 100%;
   padding: 0.75rem;
   background-color: #ff2e2e;
