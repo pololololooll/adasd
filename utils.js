@@ -88,6 +88,106 @@ export function log(type, message) {
  */
 
 /**
+ * @param {Activity} activity
+ * @returns {string}
+ */
+export function timerTemplate(activity) {
+  return `
+  <!DOCTYPE html>
+  <html>
+    <head><meta name="viewport" content="width=device-width, initial-scale=1.0"</head>
+    </body>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100vw;
+          height: 100vh;
+          background: transparent;
+          font-family: 'Inter', sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        #card {
+          background: rgba(0, 0, 0, 0.95);
+          backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 2vh 2vw;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          width: 90%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        #header {
+          font-size: 5vh;
+          margin: 0 0 0.2vh;
+          color: white;
+        }
+        .timer {
+          font-size: 6vh;
+          font-weight: bold;
+          color: #f00317;
+          margin-bottom: 1vh;
+        }
+        .info {
+          font-size: 2.5vh;
+          color: #ccc;
+        }
+      </style>
+      <div id="card">
+        <h2 id="header">${activity.name}</h2>
+        <div class="timer">00:00:00</div>
+        <div class="info">Nie rozpoczęto</div>
+      </div>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        const socket = io();
+        const timerEl = document.querySelector(".timer");
+        const infoEl = document.querySelector(".info");
+        let interval;
+        function formatTime(seconds) {
+          const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+          const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+          const s = (seconds % 60).toString().padStart(2, '0');
+          return \`\${h}:\${m}:\${s}\`;
+        }
+        function render(data) {
+          clearInterval(interval);
+          const endTime = new Date(Date.now() + data.time_left * 1000);
+          if (data.stopped) {
+            timerEl.innerText = formatTime(Math.floor((endTime - Date.now()) / 1000));
+            infoEl.innerText = "Pauza";
+            return;
+          }
+          if (data.time_left > 0) {
+            interval = setInterval(() => {
+              const diff = Math.floor((endTime - Date.now()) / 1000);
+              if (diff <= 0) {
+                clearInterval(interval);
+                timerEl.innerText = "00:00:00";
+                infoEl.innerText = "Zakończono";
+              } else {
+                infoEl.innerText = \`Zakończy się o \${endTime.getHours().toString().padStart(2, '0')}:\${endTime.getMinutes().toString().padStart(2, '0')}\`;
+                timerEl.innerText = formatTime(diff);
+              }
+            }, 1000);
+          } else {
+            timerEl.innerText = "00:00:00";
+            infoEl.textContent = "Zakończono";
+          }
+        }
+        socket.on("init", (s) => render(s.activities[s.activities.findIndex(a => a.name == "${activity.name}")]));
+        socket.on("update", (s) => render(s.activities[s.activities.findIndex(a => a.name == "${activity.name}")]));
+      </script>
+    </body>
+  </html>
+  `;
+}
+
+
+/**
  * @returns {Promise<Client>}
  */
 export async function initDB() {

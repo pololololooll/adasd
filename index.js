@@ -51,6 +51,14 @@ const storage = await util.readStorage(db);
 /** @type {Object.<string, boolean>} */
 const cooldowns = Object.fromEntries(Object.keys(storage.activities).map(k => [k, false]));
 
+// OBS endpoint
+app.get("/api/obs", (req, res) => {
+  if (!req.query || !req.query.name) return res.sendStatus(404);
+  const idx = storage.activities.findIndex(a => a.name == req.query.name);
+  if (idx == -1) return res.sendStatus(404);
+  res.send(util.timerTemplate(storage.activities[idx]));
+});
+
 app.post("/api/activity", async (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   if (!req.body || !req.body.name || !req.body.price || !req.body.cycle)
