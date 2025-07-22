@@ -64,21 +64,6 @@ export function log(type, message) {
 }
 
 /**
- * @param {string} message
- */
-export async function webhookLog(message) {
-  await fetch(process.env.WEBHOOK_URL, {
-    "method": "POST",
-    "headers": { "Content-Type": "application/json" },
-    "body": JSON.stringify({
-      content: message,
-      embeds: null,
-      attachments: []
-    })
-  });
-}
-
-/**
  * @typedef Activity
  * @type {object}
  * @property {string} name
@@ -115,14 +100,15 @@ export async function initDB() {
   await client.query(`
     CREATE TABLE IF NOT EXISTS Storage (
       id SERIAL PRIMARY KEY,
-      data JSONB
+      data JSONB,
+      streamer text
     )
   `);
   
   // Db is only so the JSON doesnt get reset by current hosting
-  const res = await client.query("SELECT COUNT(*) FROM Storage");
+  const res = await client.query("SELECT COUNT(*) FROM Storage where streamer='taku'");
   if (parseInt(res.rows[0].count) === 0)
-    await client.query("INSERT INTO Storage (data) VALUES ({})");
+    await client.query("INSERT INTO Storage (data, streamer) VALUES ($1, $2)", [{ activities: [], offers: [] }, 'taku']);
   return client;
 }
 
@@ -132,7 +118,7 @@ export async function initDB() {
  */
 export async function saveStorage(client, storage) {
   try {
-    await client.query("UPDATE Storage SET data=$1 WHERE id=1", [storage]);
+    await client.query("UPDATE Storage SET data=$1 WHERE streamer='taku'", [storage]);
     log("INFO", `Saving storage to DB`);
   } catch (err) {
     log("ERROR", "Error while trying to save storage");
@@ -146,7 +132,7 @@ export async function saveStorage(client, storage) {
  */
 export async function readStorage(client) {
   try {
-    const res = await client.query("SELECT data FROM Storage where id=1");
+    const res = await client.query("SELECT data FROM Storage where streamer='taku'");
     return res.rows[0].data;
   } catch (err) {
     log("ERROR", `Error while reading from DB`);

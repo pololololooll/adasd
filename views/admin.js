@@ -69,12 +69,14 @@ function renderActivities(activities) {
   activityTableBody.innerHTML = "";
   for (const act of activities) {
     const tr = document.createElement("tr");
+
     tr.innerHTML = `
       <td>${act.name}</td>
       <td>${act.price}</td>
       <td>${Math.floor(act.cycle / 60)} min</td>
       <td id="${act.name}-timer">${util.formatTime(act.time_left)}</td>
       <td>
+        <input class="action time placeholder="30(min)" min="0" title="Ustaw o ile zmienić czas" name="time" type="number" />
         <button class="action" title="Przedłuż" data-action="extend">➕</button>
         <button class="action" title="Zastopuj" data-action="pause">⏸️</button>
         <button class="action" title="Skróć" data-action="shorten">➖</button>
@@ -83,18 +85,28 @@ function renderActivities(activities) {
       </td>
     `;
     activityTableBody.appendChild(tr);
+
+    let customTime = null;
+    const timeInput = tr.querySelector(".time");
+
+    timeInput.addEventListener("change", () => customTime = timeInput.value);
+
     [...tr.querySelectorAll("button")].forEach((b) => 
       b.addEventListener("click", async () => {
         await fetch("/api/timer", {
+
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: act.name,
-            action: b.getAttribute("data-action")
+            action: b.getAttribute("data-action"),
+            added_time: parseInt(customTime) * 60 || null
           }),
         })
       })
+
     );
+
     startCountdown(act.name, act.time_left, act.stopped);
   }
 }

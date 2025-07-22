@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 
+const COOLDOWN_DURATION = 2000;
 const PORT = 3001;
 const app = express();
 const server = http.createServer(app);
@@ -47,7 +48,6 @@ app.post("/login", (req, res) => {
 });
 
 const storage = await util.readStorage(db);
-const COOLDOWN_DURATION = 3000;
 /** @type {Object.<string, boolean>} */
 const cooldowns = Object.fromEntries(Object.keys(storage.activities).map(k => [k, false]));
 
@@ -98,8 +98,6 @@ app.post("/api/offers", async (req, res) => {
   await util.saveStorage(db, storage);
 });
 
-
-
 app.post("/api/timer", async (req, res) => {
   if (!util.isAdmin(req)) return res.sendStatus(403);
   const idx = storage.activities.findIndex(a => a.name == req?.body?.name);
@@ -110,13 +108,13 @@ app.post("/api/timer", async (req, res) => {
   if (cooldowns[req.body.name]) return res.send({ msg: "Akcja jest na cooldownie" });
   switch (req.body.action) {
     case "extend":
-      storage.activities[idx].time_left += activ.cycle;
+      storage.activities[idx].time_left += (req.body?.added_time ?? activ.cycle);
       break;
     case "pause":
       storage.activities[idx].stopped = !activ.stopped;
       break;
     case "shorten":
-      storage.activities[idx].time_left = Math.max(activ.time_left - activ.cycle, 0);
+      storage.activities[idx].time_left = Math.max(activ.time_left - (req.body?.added_time || activ.cycle), 0);
       break;
     case "zero":
       storage.activities[idx].time_left = 0;
